@@ -1,0 +1,1 @@
+/Users/michael/Documents/dev/d2rq-0.8.1/generate-mapping -o b2b_mapping.ttl -d org.postgresql.Driver -u postgres -p admin jdbc:postgresql://localhost:5432/b2b

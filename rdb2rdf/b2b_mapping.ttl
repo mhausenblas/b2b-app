@@ -1,0 +1,53 @@
+@prefix map: <#> .
+@prefix db: <> .
+@prefix schema: <http://schema.org/> .
+@prefix like: <http://ontologi.es/like#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#> .
+@prefix jdbc: <http://d2rq.org/terms/jdbc/> .
+
+map:database a d2rq:Database;
+	d2rq:jdbcDriver "org.postgresql.Driver";
+	d2rq:jdbcDSN "jdbc:postgresql://localhost:5432/b2b";
+	d2rq:username "postgres";
+	d2rq:password "admin";
+	.
+
+# Table beer
+map:beer a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "beer/@@beer.id@@";
+	d2rq:class schema:Product;
+	d2rq:classDefinitionLabel "beer";
+	.
+map:beer_label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:beer;
+	d2rq:property rdfs:label;
+	d2rq:propertyDefinitionLabel "beer label";
+	d2rq:column "beer.label";
+	.
+
+# Table person
+map:person a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "person/@@person.id@@";
+	d2rq:class schema:Person;
+	d2rq:classDefinitionLabel "person";
+	.
+map:person_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:person;
+	d2rq:property rdfs:label;
+	d2rq:propertyDefinitionLabel "person name";
+	d2rq:column "person.name";
+	.
+
+# Table person2beer (n:m)
+map:person2beer__link a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:person;
+	d2rq:property like:likes;
+	d2rq:refersToClassMap map:beer;
+	d2rq:join "person2beer.person_id => person.id";
+	d2rq:join "person2beer.beer_id => beer.id";
+	.
