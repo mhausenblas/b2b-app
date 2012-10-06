@@ -59,13 +59,20 @@ $(function(){
 
 
 function enrich_beer(store, beer) {
-	store.execute('LOAD <' + beer + '>', function() {
-		store.execute('SELECT * WHERE { <' + beer +'> <http://dbpedia.org/ontology/abstract> ?abstract .}', function(success, results){
+	store.execute('LOAD <' + beer + '> INTO GRAPH <http://dbpedia.org>', function() {
+		var querystr = 'SELECT * FROM NAMED <http://dbpedia.org> WHERE { GRAPH <http://dbpedia.org> { <' + beer +'> <http://dbpedia.org/ontology/abstract> ?abstract .  } }';
+		console.log(querystr);
+		store.execute(querystr, function(success, results){
 			if(success) {
-				return results[0].abstract.value;
+				for (var i=0; i < results.length; i++) {
+					if(results[i].abstract.lang == 'en') { // manually filter the english abstract
+						console.log(results[i].abstract.value);
+						return results[i].abstract.value; 
+					} 
+				}
 			}
 			else {
-				return null;
+				return "not available";
 			}
 		});
 	});
